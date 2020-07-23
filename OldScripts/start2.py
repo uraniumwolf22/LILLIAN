@@ -1,10 +1,4 @@
 #Lillian GAN system by Logan Ross
-#Requires Cuda 8.0
-#Requires Cudnn Version 6 for Cuda 8.0
-#Requires Tensorflow Version 1.4.0
-#GPU toggle is found in model.py
-#run from the python file "runner" in /python35
-#Make sure runner is added to path
 
 import os
 import sys
