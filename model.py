@@ -9,7 +9,6 @@ from six.moves import xrange
 
 from ops import *
 from utils import *
-#os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 def conv_out_size_same(size, stride):
   print("Setting Convolutional output size")
   return int(math.ceil(float(size) / float(stride)))
@@ -41,7 +40,7 @@ class DCGAN(object):
     self.gfc_dim = gfc_dim
     self.dfc_dim = dfc_dim
 
-    # batch normalization : deals with poor initialization helps gradient flow
+    # batch normalization deals with poor initialization helps gradient flow
     print("Batch Normalization")
     self.d_bn1 = batch_norm(name='d_bn1')
     self.d_bn2 = batch_norm(name='d_bn2')
