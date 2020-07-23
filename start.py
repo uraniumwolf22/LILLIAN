@@ -12,8 +12,7 @@ import numpy as np
 from model import DCGAN
 from utils import pp, visualize, to_json, show_all_variables
 import tensorflow as tf
-
-sg.theme("dark")
+sg.theme("Topanga")
 def verify_image(img_file):             #Checks wheather or not an image file is valid
      try:
         v_image = Image.open(img_file)
@@ -38,6 +37,7 @@ def resize1():                          #resizes all the images in the complete 
 
 
 layout = [[sg.Text("key"),sg.Input(),sg.Text("Epoches"),sg.Input(),sg.Image(filename="logo.png")],
+          [sg.Checkbox(text="USE GPU",default=True)],
           [sg.Button("Start")],[sg.Output(size=(120,20))],
           [sg.Button("EXIT")]
           ]
@@ -45,6 +45,7 @@ window = sg.Window("LILIAN", layout)
 
 while True:
     event, value = window.read()
+   
     if event == sg.WIN_CLOSED:
         exit()
 
@@ -53,6 +54,10 @@ while True:
         key = value[0]
         epoch = int(value[1])
         break
+
+if value[3] == False:
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 
 print("LILLIAN:Epoch set to "+str(epoch))
 print("LILLIAN:Key set to "+str(key))
@@ -67,8 +72,6 @@ xm = xm
 ym = ym
     
 print("LILLIAN:Current time is " +str(datetime.datetime.now()))
-#os.system("runner.exe main.py --dataset "+key+" --input_height="+str(ym)+" --input_width="+str(xm)+
-#    " --output_height="+str(ym)+" --output_width="+str(xm)+" --epoch="+str(epoch)+" --generate_test_images=1 --batch_size=1 --visualize=True --train --crop")  #runs main program
 
 
 
