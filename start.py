@@ -14,24 +14,31 @@ from utils import pp, visualize, to_json, show_all_variables
 import tensorflow as tf
 import threading
 
-sg.theme("Topanga")
+sg.theme("Topanga")             #set theme
 
-def network_thread():
+
+#Thread definitions
+###########################################################################################
+def network_thread():               #netwok start function
     tf.app.run()
 
-def start_train_thread():
+def start_train_thread():                                       #start network thread
     threading.Thread(target=network_thread,daemon=True).start()
 
-def time_thread():
+def time_thread():                              #thread to keep track of time
     print("Time:Time thread started")
     while True:
         window.FindElement('_time_').Update(getTime())
         time.sleep(1)
         
-def start_time_thread():
+def start_time_thread():                                    #starts the time thread
     threading.Thread(target=time_thread,daemon=True).start()
+###########################################################################################
 
-def getTime():
+
+#utility function definitions
+###########################################################################################
+def getTime():                                              #function to get the current time and format it
     return datetime.datetime.now().strftime('%H:%M:%S')
 
 def verify_image(img_file):             #Checks wheather or not an image file is valid
@@ -56,8 +63,12 @@ def resize1():                          #resizes all the images in the complete 
                 img = img.resize((basewidth,hsize), Image.ANTIALIAS)    #Resize based on the base width
                 img.save("complete/"+image)           
 
+###########################################################################################
 
-def main(_):
+
+#Main network function
+###########################################################################################
+def main(_):                                                #main network initialization function
   print("LILLIAN:Initializing Network")
   pp.pprint(flags.FLAGS.__flags)
 
@@ -75,7 +86,7 @@ def main(_):
   run_config = tf.ConfigProto()
   run_config.gpu_options.allow_growth=True
 
-  with tf.Session(config=run_config) as sess:
+  with tf.Session(config=run_config) as sess:               #configure network
     if FLAGS.dataset == 'mnist':
       print("LILLIAN:Flag is set to MNST")
       dcgan = DCGAN(
@@ -111,7 +122,7 @@ def main(_):
           sample_dir="samples",
           data_dir="./data")
 
-    show_all_variables()
+    show_all_variables()                #show all variables
 
     if FLAGS.train:
       dcgan.train(FLAGS)
@@ -121,10 +132,13 @@ def main(_):
       
 
     OPTION = 1
-    visualize(sess, dcgan, FLAGS, OPTION)
+    visualize(sess, dcgan, FLAGS, OPTION)       #Visualize network
+###########################################################################################
 
 
-layout = [
+#UI function
+###########################################################################################
+layout = [                                                                          #UI Layout
           [sg.Text("key"),sg.Input(),sg.Image(filename="logo.png")],
           [sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Text('   Time: ',size=(20,1)),sg.Text('', key='_time_')],
           [sg.Text('Batches '),sg.Slider(range=(1,64),orientation='h'),sg.Checkbox(text="USE GPU",default=True)],
@@ -132,28 +146,29 @@ layout = [
           [sg.Output(size=(65,5))],
           [sg.Button("EXIT")]
           ]
-window = sg.Window("LILIAN", layout)
+window = sg.Window("LILIAN", layout)        #initialize the window
 
 timeinitialized = False
 
-while True:
+while True:                                 #UI function
     event, value = window.read()
     
-    if event == sg.WIN_CLOSED:
+    if event == sg.WIN_CLOSED:              #exit program if the window is closed
         exit()
 
-    if event == "Start":
-        if timeinitialized == False:
+    if event == "Start":                    #check for the start button to be pressed
+
+        if timeinitialized == False:        #check if the time thread has been started, if not start it
             start_time_thread()
             timeinitialized = True
 
 
         print(value)
-        key = value[0]
+        key = value[0]                      #set network configuration based on UI input
         epoch = int(value[2])
         batchsz = int(value[3])
 
-        if value[4] == False:
+        if value[4] == False:                           #disable the GPU device if unchecked in UI
             os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
             print("Manager:USING CPU")
 
@@ -170,10 +185,10 @@ while True:
         xm = xm
         ym = ym
     
-        print("Manager:Current time is " +str(datetime.datetime.now()))
+        print("Manager:Current time is " +str(datetime.datetime.now()))                         #get time and display in debug window
 
 
-        flags = tf.app.flags
+        flags = tf.app.flags                                                                    #set network flags
         flags.DEFINE_integer("epoch", epoch," ")
         flags.DEFINE_float("learning_rate", 0.0002," ")
         flags.DEFINE_float("beta1", 0.5," ")
@@ -194,12 +209,12 @@ while True:
         flags.DEFINE_integer("generate_test_images", 1," ")
         FLAGS = flags.FLAGS
 
-        start_train_thread()
+        start_train_thread()                                        #start the training thread
         print("Manager:function returned")
 
 
-    if event == sg.WIN_CLOSED:
+    if event == sg.WIN_CLOSED:              
         exit()
     if event == "EXIT":
         exit()
-
+###########################################################################################

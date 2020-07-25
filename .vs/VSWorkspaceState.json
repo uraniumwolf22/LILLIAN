@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\OldScripts"
+    "\\logs",
+    "\\OldScripts",
+    "\\samples"
   ],
-  "SelectedNode": "\\start.py",
+  "SelectedNode": "\\logs",
   "PreviewInSolutionExplorer": false
 }
