@@ -1,4 +1,4 @@
-LILLIAN LCNN-GAN system by Logan Ross 2013 - 2020
+LILLIAN LCNN-GAN system by Logan Ross 20xx - 2020
 
 To run you will need the following:
 
