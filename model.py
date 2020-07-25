@@ -9,6 +9,7 @@ from six.moves import xrange
 
 from ops import *
 from utils import *
+#os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 def conv_out_size_same(size, stride):
   print("Setting Convolutional output size")
   return int(math.ceil(float(size) / float(stride)))
@@ -40,7 +41,7 @@ class DCGAN(object):
     self.gfc_dim = gfc_dim
     self.dfc_dim = dfc_dim
 
-    # batch normalization deals with poor initialization helps gradient flow
+    # batch normalization : deals with poor initialization helps gradient flow
     print("Batch Normalization")
     self.d_bn1 = batch_norm(name='d_bn1')
     self.d_bn2 = batch_norm(name='d_bn2')
@@ -277,13 +278,12 @@ class DCGAN(object):
         print("Epoch: [%2d/%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f" \
           % (epoch, config.epoch, idx, batch_idxs,
             time.time() - start_time, errD_fake+errD_real, errG))
-        
 
-        with open("log.txt","w") as textfile:
+
+        with open("log.txt","a") as textfile:
             textfile.write("Epoch: [%2d/%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f" \
           % (epoch, config.epoch, idx, batch_idxs,
             time.time() - start_time, errD_fake+errD_real, errG)+"\n")
-
 
         if np.mod(counter, 100) == 1:
           if config.dataset == 'mnist':

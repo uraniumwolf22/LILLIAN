@@ -140,7 +140,7 @@ def main(_):                                                #main network initia
 ###########################################################################################
 layout = [                                                                          #UI Layout
           [sg.Text("key"),sg.Input(),sg.Image(filename="logo.png")],
-          [sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Text('   Time: ',size=(20,1)),sg.Text('', key='_time_')],
+          [sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Text('   Time: '),sg.Text('', key='_time_',size=(20,1))],
           [sg.Text('Batches '),sg.Slider(range=(1,64),orientation='h'),sg.Checkbox(text="USE GPU",default=True)],
           [sg.Button("Start"),sg.Text('LOG')],
           [sg.Output(size=(65,5))],
@@ -152,7 +152,11 @@ timeinitialized = False
 
 while True:                                 #UI function
     event, value = window.read()
-    
+    if timeinitialized == False:        #check if the time thread has been started, if not start it
+        start_time_thread()
+        timeinitialized = True
+
+
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
         exit()
 
@@ -217,4 +221,4 @@ while True:                                 #UI function
         exit()
     if event == "EXIT":
         exit()
-###########################################################################################
+
