@@ -22,6 +22,9 @@ def network_thread():
 def start_train_thread():
     threading.Thread(target=network_thread,daemon=True).start()
 
+
+
+
 def time_thread():
     while True:
 
@@ -32,6 +35,7 @@ def time_thread():
 
 def start_time_thread():
     threading.Thread(target=time_thread,daemon=True).start()
+
 
 
 def getTime():
@@ -88,8 +92,8 @@ def main(_):
           input_height=ym,
           output_width=xm,
           output_height=ym,
-          batch_size=1,
-          sample_num=1,
+          batch_size=batchsz,
+          sample_num=batchsz,
           y_dim=10,
           z_dim=1,
           dataset_name=key,
@@ -105,8 +109,8 @@ def main(_):
           input_height=ym,
           output_width=xm,
           output_height=ym,
-          batch_size=1,
-          sample_num=1,
+          batch_size=batchsz,
+          sample_num=batchsz,
           z_dim=1,
           dataset_name=key,
           input_fname_pattern="*.jpg",
@@ -129,9 +133,11 @@ def main(_):
 
 
 
-layout = [[sg.Text("key"),sg.Input(),sg.Text("Epoches"),sg.Input(),sg.Image(filename="logo.png")],
+layout = [[sg.Text("key"),sg.Input(),sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Image(filename="logo.png")],
+          [sg.Text('Batch Size'),sg.Slider(range=(1,64),orientation='h')],
           [sg.Checkbox(text="USE GPU",default=True)],
-          [sg.Button("Start"),sg.Text('Time: '), sg.Text('', key='_time_',size=(20,1))],#[sg.Output(size=(110,5))],
+          [sg.Button("Start"),sg.Text('Time: '), sg.Text('', key='_time_',size=(20,1)),sg.Text('LOG')],
+          #[sg.Output(size=(110,5))],
           [sg.Button("EXIT")]
           ]
 window = sg.Window("LILIAN", layout)
@@ -146,8 +152,9 @@ while True:
         print(value)
         key = value[0]
         epoch = int(value[1])
+        batchsz = int(value[3])
 
-        if value[3] == False:
+        if value[4] == False:
             os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
             print("LILLIAN:USING CPU")
 
