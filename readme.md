@@ -2,11 +2,11 @@
 
 **Requirements:**
 - Cuda 8.0
-- cuDNN V6.0 for Cuda 8.0
+- cuDNN v6.0 for Cuda 8.0
 - Tensorflow version 1.4
 
-You may need a special python installation I have and can give its too big to upload here
-Make sure the coustom python distro is added to %path%
+You may need a special python installation I have, though it's too big to upload here.\
+Make sure the custom python distro is added to %path%.
 
 The file structure should be self repairing if you break it.
 
