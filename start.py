@@ -22,21 +22,14 @@ def network_thread():
 def start_train_thread():
     threading.Thread(target=network_thread,daemon=True).start()
 
-
-
-
 def time_thread():
+    print("Time:Time thread started")
     while True:
-
-        
         window.FindElement('_time_').Update(getTime())
         time.sleep(1)
-
-
+        
 def start_time_thread():
     threading.Thread(target=time_thread,daemon=True).start()
-
-
 
 def getTime():
     return datetime.datetime.now().strftime('%H:%M:%S')
@@ -62,7 +55,6 @@ def resize1():                          #resizes all the images in the complete 
                 hsize = int((float(img.size[1])*float(wpercent)))
                 img = img.resize((basewidth,hsize), Image.ANTIALIAS)    #Resize based on the base width
                 img.save("complete/"+image)           
-
 
 
 def main(_):
@@ -132,15 +124,17 @@ def main(_):
     visualize(sess, dcgan, FLAGS, OPTION)
 
 
-
-layout = [[sg.Text("key"),sg.Input(),sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Image(filename="logo.png")],
-          [sg.Text('Batch Size'),sg.Slider(range=(1,64),orientation='h')],
-          [sg.Checkbox(text="USE GPU",default=True)],
-          [sg.Button("Start"),sg.Text('Time: '), sg.Text('', key='_time_',size=(20,1)),sg.Text('LOG')],
-          #[sg.Output(size=(110,5))],
+layout = [
+          [sg.Text("key"),sg.Input(),sg.Image(filename="logo.png")],
+          [sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Text('   Time: ',size=(20,1)),sg.Text('', key='_time_')],
+          [sg.Text('Batches '),sg.Slider(range=(1,64),orientation='h'),sg.Checkbox(text="USE GPU",default=True)],
+          [sg.Button("Start"),sg.Text('LOG')],
+          [sg.Output(size=(65,5))],
           [sg.Button("EXIT")]
           ]
 window = sg.Window("LILIAN", layout)
+
+timeinitialized = False
 
 while True:
     event, value = window.read()
@@ -149,19 +143,24 @@ while True:
         exit()
 
     if event == "Start":
+        if timeinitialized == False:
+            start_time_thread()
+            timeinitialized = True
+
+
         print(value)
         key = value[0]
-        epoch = int(value[1])
+        epoch = int(value[2])
         batchsz = int(value[3])
 
         if value[4] == False:
             os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-            print("LILLIAN:USING CPU")
+            print("Manager:USING CPU")
 
-        print("LILLIAN:USING GPU")
-        print("LILLIAN:Epoch set to "+str(epoch))
-        print("LILLIAN:Key set to "+str(key))
-        print("LILLIAN:Scanning Data")
+        print("Manager:USING GPU")
+        print("Manager:Epoch set to "+str(epoch))
+        print("Manager:Key set to "+str(key))
+        print("Manager:Scanning Data")
 
         for thing in os.listdir("data/"+key+"/"):                                               #verify images in data directory
             if thing.endswith(".jpg" or ".png" or ".jpeg") & verify_image(thing) == False:
@@ -171,8 +170,7 @@ while True:
         xm = xm
         ym = ym
     
-        print("LILLIAN:Current time is " +str(datetime.datetime.now()))
-
+        print("Manager:Current time is " +str(datetime.datetime.now()))
 
 
         flags = tf.app.flags
@@ -197,20 +195,11 @@ while True:
         FLAGS = flags.FLAGS
 
         start_train_thread()
-        print("LILLIAN:function returned")
-        start_time_thread()
+        print("Manager:function returned")
 
 
     if event == sg.WIN_CLOSED:
         exit()
     if event == "EXIT":
         exit()
-
-
-#print("LILLIAN:Moving files")
-#for samples in os.listdir("samples/"):                              #moves files
-    #os.rename("samples/"+samples,"complete/"+samples)
-
-#print("LILLIAN:Time complete "+str(datetime.datetime.now()))
-#print("LILLIAN:Complete!")
 
