@@ -1,10 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\logs",
-    "\\OldScripts",
+    "\\checkpoint",
     "\\samples"
   ],
-  "SelectedNode": "\\logs",
+  "SelectedNode": "\\samples\\train_99_0001.png",
   "PreviewInSolutionExplorer": false
 }
