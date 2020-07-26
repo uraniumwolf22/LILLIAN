@@ -30,7 +30,7 @@ def time_thread():                              #thread to keep track of time
     while True:
         window.FindElement('_time_').Update(getTime())
         time.sleep(1)
-        
+
 def start_time_thread():                                    #starts the time thread
     threading.Thread(target=time_thread,daemon=True).start()
 ###########################################################################################
@@ -54,14 +54,14 @@ def verify_image(img_file):             #Checks wheather or not an image file is
 def resize1():                          #resizes all the images in the complete directory
     print("Resizeing")
     while True:
-        for image in os.listdir("complete/"): 
+        for image in os.listdir("complete/"):
             basewidth = 1000
             if image.endswith(".jpg" or ".png"):                        #Check image type
                 img = Image.open("complete/"+image+"/")
                 wpercent = (basewidth/float(img.size[0]))
                 hsize = int((float(img.size[1])*float(wpercent)))
                 img = img.resize((basewidth,hsize), Image.ANTIALIAS)    #Resize based on the base width
-                img.save("complete/"+image)           
+                img.save("complete/"+image)
 
 ###########################################################################################
 
@@ -129,7 +129,7 @@ def main(_):                                                #main network initia
     else:
       if not dcgan.load(FLAGS.checkpoint_dir)[0]:
         raise Exception("LILLIAN:Error:Train a model first, then run test mode")
-      
+
 
     OPTION = 1
     visualize(sess, dcgan, FLAGS, OPTION)       #Visualize network
@@ -139,7 +139,7 @@ def main(_):                                                #main network initia
 #UI function
 ###########################################################################################
 layout = [                                                                          #UI Layout
-          [sg.Text("key"),sg.Input(),sg.Image(filename="logo.png")],
+          [sg.Text("key"),sg.Input(),sg.Image(filename="./icons/logo.png")],
           [sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Text('   Time: '),sg.Text('', key='_time_',size=(20,1))],
           [sg.Text('Batches '),sg.Slider(range=(1,64),orientation='h'),sg.Checkbox(text="USE GPU",default=True)],
           [sg.Button("Start"),sg.Text('LOG')],
@@ -188,7 +188,7 @@ while True:                                 #UI function
         xm,ym = getdata(key)
         xm = xm
         ym = ym
-    
+
         print("Manager:Current time is " +str(datetime.datetime.now()))                         #get time and display in debug window
 
 
@@ -217,8 +217,7 @@ while True:                                 #UI function
         print("Manager:function returned")
 
 
-    if event == sg.WIN_CLOSED:              
+    if event == sg.WIN_CLOSED:
         exit()
     if event == "EXIT":
         exit()
-
