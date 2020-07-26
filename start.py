@@ -27,9 +27,9 @@ def start_train_thread():                                       #start network t
 
 def time_thread():                              #thread to keep track of time
     print("Time:Time thread started")
-    while True:
-        window.FindElement('_time_').Update(getTime())
-        time.sleep(1)
+    # while True:
+    #     window.FindElement('_time_').Update(getTime())
+    #     time.sleep(1)
 
 def start_time_thread():                                    #starts the time thread
     threading.Thread(target=time_thread,daemon=True).start()
@@ -138,26 +138,43 @@ def main(_):                                                #main network initia
 
 #UI function
 ###########################################################################################
-layout = [                                                                          #UI Layout
-          [sg.Text("key"),sg.Input(),sg.Image(filename="./icons/logo.png")],
-          [sg.Text("Epoches"),sg.Slider(range=(1,500),orientation='h'),sg.Text('   Time: '),sg.Text('', key='_time_',size=(20,1))],
-          [sg.Text('Batches '),sg.Slider(range=(1,64),orientation='h'),sg.Checkbox(text="USE GPU",default=True)],
-          [sg.Button("Start"),sg.Text('LOG')],
-          [sg.Output(size=(65,5))],
-          [sg.Button("EXIT")]
-          ]
-window = sg.Window("LILIAN", layout)        #initialize the window
+
+ui_back, ui_mid, ui_front, ui_text = '#373737', '#404040', '#505050', '#A4A4A4'
+sg.theme_background_color(ui_mid)
+sg.theme_button_color((ui_text, ui_back))
+sg.theme_element_background_color(ui_mid)
+sg.theme_input_background_color(ui_back)
+sg.theme_text_element_background_color(ui_mid)      # Set up custom theme
+sg.theme_element_text_color('white')
+sg.theme_input_text_color('white')
+sg.theme_text_color(ui_text)
+sg.theme_element_text_color(ui_text)
+sg.theme_input_text_color(ui_text)
+# sg.theme('SystemDefaultForReal')
+
+frame1 = [[sg.Text('Key:         '), sg.Input(size=(12,1))],
+          [sg.Text('Epochs:     '), sg.Spin([i for i in range(1, 501)], 5, size=(10,1))],
+          [sg.Text('Batch Size:'), sg.Spin([i for i in range(1, 65)], 1, size=(10,1))],
+          [sg.Radio('CPU', 1), sg.Radio('GPU', 1, True)]]
+
+frame2 = [[sg.ProgressBar(100, size=(52,8), bar_color=(ui_front, ui_back), key='prog')],
+          [sg.Output((80,7))]]
+
+layout = [[sg.Column([[sg.Frame('Setup', frame1)],
+                      [sg.Button('Start', size=(8,1)),
+                       sg.Button('Stop', size=(6,1), disabled=True),
+                       sg.Button('Exit', size=(4,1))]]),
+           sg.Frame('Status', frame2)]]
+
+window = sg.Window('LILLIAN', layout, icon='./icons/logo-flat.ico') #logo-flat2 for dark ico
 
 timeinitialized = False
 
-while True:                                 #UI function
-    event, value = window.read()
-    if timeinitialized == False:        #check if the time thread has been started, if not start it
-        start_time_thread()
-        timeinitialized = True
-
+while True:
+    event, value = window.read()        #initialize the window
 
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
+        window.close()
         exit()
 
     if event == "Start":                    #check for the start button to be pressed
@@ -166,17 +183,20 @@ while True:                                 #UI function
             start_time_thread()
             timeinitialized = True
 
-
-        print(value)
-        key = value[0]                      #set network configuration based on UI input
-        epoch = int(value[2])
-        batchsz = int(value[3])
+        try:
+            print(value)
+            key = value[0]                  #set network configuration based on UI input
+            epoch = int(value[1])
+            batchsz = int(value[2])
+        except TypeError:
+            print('ERROR: Epoch and batch must be integers.')
+            continue
 
         if value[4] == False:                           #disable the GPU device if unchecked in UI
             os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
             print("Manager:USING CPU")
+        else: print("Manager:USING GPU")
 
-        print("Manager:USING GPU")
         print("Manager:Epoch set to "+str(epoch))
         print("Manager:Key set to "+str(key))
         print("Manager:Scanning Data")
@@ -189,10 +209,12 @@ while True:                                 #UI function
         xm = xm
         ym = ym
 
-        print("Manager:Current time is " +str(datetime.datetime.now()))                         #get time and display in debug window
+        print("Manager:Current time is " +str(datetime.datetime.now()))      #get time and display in debug window
+        window['Start'].Update(disabled=True)
+        window['Stop'].Update(disabled=False)                                # Update Buttons
 
 
-        flags = tf.app.flags                                                                    #set network flags
+        flags = tf.app.flags                                                 #set network flags
         flags.DEFINE_integer("epoch", epoch," ")
         flags.DEFINE_float("learning_rate", 0.0002," ")
         flags.DEFINE_float("beta1", 0.5," ")
@@ -217,7 +239,6 @@ while True:                                 #UI function
         print("Manager:function returned")
 
 
-    if event == sg.WIN_CLOSED:
-        exit()
-    if event == "EXIT":
+    if event in (sg.WIN_CLOSED, 'Exit'):
+        window.close()
         exit()
