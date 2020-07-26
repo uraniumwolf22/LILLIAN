@@ -197,7 +197,7 @@ while True:                                 #UI function
         flags.DEFINE_float("learning_rate", 0.0002," ")
         flags.DEFINE_float("beta1", 0.5," ")
         flags.DEFINE_float("train_size", np.inf," ")
-        flags.DEFINE_integer("batch_size", 1,"")
+        flags.DEFINE_integer("batch_size", batchsz,"")
         flags.DEFINE_integer("input_height", ym," ")
         flags.DEFINE_integer("input_width", xm," ")
         flags.DEFINE_integer("output_height", ym," ")
