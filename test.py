@@ -1,13 +1,14 @@
 import time
 
 def gettimefromfile():
-    with open("datapipe.txt","r") as file:
-        file = file.read()
-        if file == "":
-            file = '__keeplast__'
+    while True:
+        with open("datapipe.txt","r") as file:
+            file = file.read()
+            if file == "":
+                file = '__keeplast__'
 
-        if time.localtime().tm_sec % 2 == 1:
-            print(file)
-
+            if time.localtime().tm_sec % 2 == 1:
+                break
+    return(file)
 while True:
-    gettimefromfile()
+    print(gettimefromfile())
