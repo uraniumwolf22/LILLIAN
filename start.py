@@ -20,12 +20,13 @@ sg.theme("Topanga")             #set theme
 #Thread definitions
 ###########################################################################################
 def epoch_update():
-
-    time.sleep(.1)
-    lastval = gettimefromfile()
-    lastval = lastval.split("/")
-    current_epoch = lastval[0]
-    total_epoch = lastval[1]
+    while True:
+        time.sleep(.1)
+        lastval = gettimefromfile()
+        if file != "":
+            lastval = lastval.split("/")
+            current_epoch = lastval[0]
+            total_epoch = lastval[1]
 
 
 def start_epoch_thread():
