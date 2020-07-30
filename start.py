@@ -188,14 +188,28 @@ layout = [[sg.Column([[sg.Frame('Setup', frame1)],
                       [sg.Button('Start', size=(8,1)),
                        sg.Button('Stop', size=(6,1), disabled=True),
                        sg.Button('Exit', size=(4,1))]]),
-           sg.Frame('Status', frame2)]]
+           sg.Frame('Status', frame2)],
+          [sg.StatusBar('Start Time:         '+('    '*5)+'Elapsed Time:         ', size=(100,1), key='status')]]
 
 window = sg.Window('LILLIAN', layout, icon='./icons/logo-flat.ico') #logo-flat2 for dark ico
+
+def errorcheck():
+    if value[0] == '':
+        print('ERROR: Missing key')
+        return ValueError
+    if int(value[1]) <= 0:
+        print('ERROR: Epochs must be >0')
+        return ValueError
+    if int(value[2]) <= 0:
+        print('ERROR: Batch size must be >0')
+        return ValueError
 
 timeinitialized = False
 
 while True:
     event, value = window.read()            #initialize the window
+
+    if errorcheck() == ValueError: continue
 
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
         window.close()
