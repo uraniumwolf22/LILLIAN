@@ -19,11 +19,30 @@ sg.theme("Topanga")             #set theme
 
 #Thread definitions
 ###########################################################################################
+
+completed =False
+def update_thread():
+
+    while completed == False:
+        time.sleep(10)
+        if trainthread.is_alive() == False:
+            print("Completed!")
+            completed == True
+            break
+
+    return()
+
+def start_update_thread():
+    print("Update:update thread started")
+    updatethread.start()
+
 def network_thread():               #netwok start function
     tf.app.run()
 
 def start_train_thread():                                       #start network thread
-    threading.Thread(target=network_thread,daemon=True).start()
+    print("Network:Network thread started")
+    trainthread.start()
+
 
 def time_thread():                              #thread to keep track of time
     print("Time:Time thread started")
@@ -33,6 +52,9 @@ def time_thread():                              #thread to keep track of time
 
 def start_time_thread():                                    #starts the time thread
     threading.Thread(target=time_thread,daemon=True).start()
+
+trainthread = threading.Thread(target=network_thread,daemon=True)
+updatethread = threading.Thread(target=update_thread,daemon=True)
 ###########################################################################################
 
 
@@ -150,7 +172,7 @@ sg.theme_input_text_color('white')
 sg.theme_text_color(ui_text)
 sg.theme_element_text_color(ui_text)
 sg.theme_input_text_color(ui_text)
-# sg.theme('SystemDefaultForReal')
+#sg.theme('SystemDefaultForReal')
 
 frame1 = [[sg.Text('Key:         '), sg.Input(size=(12,1))],
           [sg.Text('Epochs:     '), sg.Spin([i for i in range(1, 501)], 5, size=(10,1))],
@@ -184,7 +206,6 @@ while True:
             timeinitialized = True
 
         try:
-            print(value)
             key = value[0]                  #set network configuration based on UI input
             epoch = int(value[1])
             batchsz = int(value[2])
@@ -199,7 +220,7 @@ while True:
 
         print("Manager:Epoch set to "+str(epoch))
         print("Manager:Key set to "+str(key))
-        print("Manager:Scanning Data")
+        print("Manager:Verifying data structure integrity")
 
         for thing in os.listdir("data/"+key+"/"):                                               #verify images in data directory
             if thing.endswith(".jpg" or ".png" or ".jpeg") & verify_image(thing) == False:
@@ -236,8 +257,8 @@ while True:
         FLAGS = flags.FLAGS
 
         start_train_thread()                                        #start the training thread
-        print("Manager:function returned")
-
+        print("Manager:Training thread returned")
+        start_update_thread()
 
     if event in (sg.WIN_CLOSED, 'Exit'):
         window.close()

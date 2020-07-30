@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\checkpoint",
+    "\\OldScripts",
     "\\samples"
   ],
-  "SelectedNode": "\\start.py",
+  "SelectedNode": "\\model.py",
   "PreviewInSolutionExplorer": false
 }
