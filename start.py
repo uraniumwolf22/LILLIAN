@@ -19,11 +19,29 @@ sg.theme("Topanga")             #set theme
 
 #Thread definitions
 ###########################################################################################
+
+completed =False
+def update_thread():
+    while completed == False:
+        time.sleep(10)
+        if trainthread.is_alive() == False:
+            print("Completed!")
+            completed == True
+            break
+
+    return()
+
+def start_update_thread():
+    print("Update:update thread started")
+    updatethread.start()
+
 def network_thread():               #netwok start function
     tf.app.run()
 
 def start_train_thread():                                       #start network thread
-    threading.Thread(target=network_thread,daemon=True).start()
+    print("Network:Network thread started")
+    trainthread.start()
+
 
 def time_thread():                              #thread to keep track of time
     print("Time:Time thread started")
@@ -33,11 +51,17 @@ def time_thread():                              #thread to keep track of time
 
 def start_time_thread():                                    #starts the time thread
     threading.Thread(target=time_thread,daemon=True).start()
+
+trainthread = threading.Thread(target=network_thread,daemon=True)
+updatethread = threading.Thread(target=update_thread,daemon=True)
 ###########################################################################################
 
 
 #utility function definitions
 ###########################################################################################
+
+
+
 def getTime():                                              #function to get the current time and format it
     return datetime.now().strftime('%H:%M:%S')
 
@@ -166,7 +190,7 @@ layout = [[sg.Column([[sg.Frame('Setup', frame1)],
                        sg.Button('Exit', size=(4,1))]]),
            sg.Frame('Status', frame2)]]
 
-window = sg.Window('LILLIAN', layout, icon='./icons/logo-flat2.ico') #logo-flat1 for light icon
+window = sg.Window('LILLIAN', layout, icon='./icons/logo-flat.ico') #logo-flat2 for dark ico
 
 timeinitialized = False
 
@@ -174,6 +198,7 @@ while True:
     event, value = window.read()            #initialize the window
 
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
+        window.close()
         exit()
 
     if event == "Start":                    #check for the start button to be pressed
@@ -182,20 +207,22 @@ while True:
             start_time_thread()
             timeinitialized = True
 
-
-        print(value)
-        key = value[0]                      #set network configuration based on UI input
-        epoch = int(value[2])
-        batchsz = int(value[3])
+        try:
+            key = value[0]                  #set network configuration based on UI input
+            epoch = int(value[1])
+            batchsz = int(value[2])
+        except TypeError:
+            print('ERROR: Epoch and batch must be integers.')
+            continue
 
         if value[4] == False:
             os.environ["CUDA_VISIBLE_DEVICES"] = "-1"        #disable the GPU device if unchecked in UI
             print("Manager:USING CPU")
+        else: print("Manager:USING GPU")
 
-        print("Manager:USING GPU")
         print("Manager:Epoch set to "+str(epoch))
         print("Manager:Key set to "+str(key))
-        print("Manager:Scanning Data")
+        print("Manager:Verifying data structure integrity")
 
         for thing in os.listdir("data/"+key+"/"):                                               #verify images in data directory
             if thing.endswith(".jpg" or ".png" or ".jpeg") & verify_image(thing) == False:
@@ -210,7 +237,7 @@ while True:
         window['Stop'].Update(disabled=False)                                # Update Buttons
 
 
-        flags = tf.app.flags                                                                    #set network flags
+        flags = tf.app.flags                                                 #set network flags
         flags.DEFINE_integer("epoch", epoch," ")
         flags.DEFINE_float("learning_rate", 0.0002," ")
         flags.DEFINE_float("beta1", 0.5," ")
@@ -232,10 +259,9 @@ while True:
         FLAGS = flags.FLAGS
 
         start_train_thread()                                        #start the training thread
-        print("Manager:function returned")
+        print("Manager:Training thread returned")
+        start_update_thread()
 
-
-    if event == sg.WIN_CLOSED:
-        exit()
-    if event == "EXIT":
+    if event in (sg.WIN_CLOSED, 'Exit'):
+        window.close()
         exit()

@@ -20,6 +20,7 @@ class DCGAN(object):
          y_dim=None, z_dim=100, gf_dim=64, df_dim=64,
          gfc_dim=1024, dfc_dim=1024, c_dim=3, dataset_name='default',
          input_fname_pattern='*.jpg', checkpoint_dir=None, sample_dir=None, data_dir='./data'):
+    print("#####SWITCHING TO NETWORK DEBUG#####")
     print("Initializing DCGAN class")
     self.sess = sess
     self.crop = crop
@@ -284,6 +285,11 @@ class DCGAN(object):
             textfile.write("Epoch: [%2d/%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f" \
           % (epoch, config.epoch, idx, batch_idxs,
             time.time() - start_time, errD_fake+errD_real, errG)+"\n")
+
+        with open("datapipe.txt","w+") as pipefile:
+            if time.localtime().tm_sec % 2 == 0:
+                pipefile.write(str(epoch)+"/"+str(config.epoch))
+            pipefile.close()
 
         if np.mod(counter, 100) == 1:
           if config.dataset == 'mnist':
