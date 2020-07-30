@@ -198,7 +198,9 @@ sg.theme_element_text_color(ui_text)
 sg.theme_input_text_color(ui_text)
 # sg.theme('SystemDefaultForReal')
 
-frame1 = [[sg.Text('Key:         '), sg.Input(size=(12,1))],
+keylist = os.listdir('./data')
+
+frame1 = [[sg.Text('Key:          '), sg.Combo(os.listdir('./data'), size=(10,1))],
           [sg.Text('Epochs:     '), sg.Spin([i for i in range(1, 501)], 5, size=(10,1))],
           [sg.Text('Batch Size:'), sg.Spin([i for i in range(1, 65)], 1, size=(10,1))],
           [sg.Radio('CPU', 1), sg.Radio('GPU', 1, True)]]
@@ -211,7 +213,7 @@ layout = [[sg.Column([[sg.Frame('Setup', frame1)],
                        sg.Button('Stop', size=(6,1), disabled=True),
                        sg.Button('Exit', size=(4,1))]]),
            sg.Frame('Status', frame2)],
-          [sg.StatusBar('Start Time:         '+('    '*5)+'Elapsed Time:         ', size=(100,1), key='status')]]
+          [sg.StatusBar('Start Time: 00:00:00'+('    '*4)+'Elapsed Time: 00:00:00'+('    '*4)+'Epoch: 0/0', size=(100,1), key='status')]]
 
 window = sg.Window('LILLIAN', layout, icon='./icons/logo-flat.ico') #logo-flat2 for dark ico
 
@@ -231,6 +233,7 @@ timeinitialized = False
 while True:
     event, value = window.read()            #initialize the window
 
+    print(keylist)
     if errorcheck() == ValueError: continue
 
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
