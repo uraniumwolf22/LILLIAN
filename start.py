@@ -4,9 +4,9 @@ import sys
 import PIL
 from PIL import Image
 from getdata import getdata
-import time
+from time import sleep
 import pyautogui as gui
-import datetime
+from datetime import datetime
 import scipy.misc
 import numpy as np
 from model import DCGAN
@@ -84,7 +84,7 @@ def gettimefromfile():
     return(file)
 
 def getTime():                                              #function to get the current time and format it
-    return datetime.datetime.now().strftime('%H:%M:%S')
+    return datetime.now().strftime('%H:%M:%S')
 
 def verify_image(img_file):             #Checks wheather or not an image file is valid
      try:
@@ -97,7 +97,7 @@ def verify_image(img_file):             #Checks wheather or not an image file is
         return True                     #returns the state of the image file
 
 def resize1():                          #resizes all the images in the complete directory
-    print("Resizeing")
+    print("Resizing")
     while True:
         for image in os.listdir("complete/"):
             basewidth = 1000
@@ -195,7 +195,7 @@ sg.theme_input_text_color('white')
 sg.theme_text_color(ui_text)
 sg.theme_element_text_color(ui_text)
 sg.theme_input_text_color(ui_text)
-#sg.theme('SystemDefaultForReal')
+# sg.theme('SystemDefaultForReal')
 
 frame1 = [[sg.Text('Key:         '), sg.Input(size=(12,1))],
           [sg.Text('Epochs:     '), sg.Spin([i for i in range(1, 501)], 5, size=(10,1))],
@@ -209,14 +209,28 @@ layout = [[sg.Column([[sg.Frame('Setup', frame1)],
                       [sg.Button('Start', size=(8,1)),
                        sg.Button('Stop', size=(6,1), disabled=True),
                        sg.Button('Exit', size=(4,1))]]),
-           sg.Frame('Status', frame2)]]
+           sg.Frame('Status', frame2)],
+          [sg.StatusBar('Start Time:         '+('    '*5)+'Elapsed Time:         ', size=(100,1), key='status')]]
 
 window = sg.Window('LILLIAN', layout, icon='./icons/logo-flat.ico') #logo-flat2 for dark ico
+
+def errorcheck():
+    if value[0] == '':
+        print('ERROR: Missing key')
+        return ValueError
+    if int(value[1]) <= 0:
+        print('ERROR: Epochs must be >0')
+        return ValueError
+    if int(value[2]) <= 0:
+        print('ERROR: Batch size must be >0')
+        return ValueError
 
 timeinitialized = False
 
 while True:
-    event, value = window.read()        #initialize the window
+    event, value = window.read()            #initialize the window
+
+    if errorcheck() == ValueError: continue
 
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
         window.close()
@@ -236,8 +250,8 @@ while True:
             print('ERROR: Epoch and batch must be integers.')
             continue
 
-        if value[4] == False:                           #disable the GPU device if unchecked in UI
-            os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        if value[4] == False:
+            os.environ["CUDA_VISIBLE_DEVICES"] = "-1"        #disable the GPU device if unchecked in UI
             print("Manager:USING CPU")
         else: print("Manager:USING GPU")
 
@@ -253,7 +267,7 @@ while True:
         xm = xm
         ym = ym
 
-        print("Manager:Current time is " +str(datetime.datetime.now()))      #get time and display in debug window
+        print("Manager:Current time is " +str(datetime.now()))      #get time and display in debug window
         window['Start'].Update(disabled=True)
         window['Stop'].Update(disabled=False)                                # Update Buttons
 
