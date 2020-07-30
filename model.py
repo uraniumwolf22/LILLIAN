@@ -286,8 +286,10 @@ class DCGAN(object):
           % (epoch, config.epoch, idx, batch_idxs,
             time.time() - start_time, errD_fake+errD_real, errG)+"\n")
 
-        with open("datapipe.txt","w") as file:
-            file.write(str(epoch)+"/"+str(config.epoch))
+        with open("datapipe.txt","w+") as pipefile:
+            if time.localtime().tm_sec % 2 == 0:
+                pipefile.write(str(epoch)+"/"+str(config.epoch))
+            pipefile.close()
 
         if np.mod(counter, 100) == 1:
           if config.dataset == 'mnist':

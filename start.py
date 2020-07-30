@@ -22,7 +22,6 @@ sg.theme("Topanga")             #set theme
 
 completed =False
 def update_thread():
-
     while completed == False:
         time.sleep(10)
         if trainthread.is_alive() == False:
@@ -60,6 +59,9 @@ updatethread = threading.Thread(target=update_thread,daemon=True)
 
 #utility function definitions
 ###########################################################################################
+
+
+
 def getTime():                                              #function to get the current time and format it
     return datetime.datetime.now().strftime('%H:%M:%S')
 
