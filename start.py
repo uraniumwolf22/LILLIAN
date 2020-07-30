@@ -13,12 +13,25 @@ from model import DCGAN
 from utils import pp, visualize, to_json, show_all_variables
 import tensorflow as tf
 import threading
-
+import os
 sg.theme("Topanga")             #set theme
 
 
 #Thread definitions
 ###########################################################################################
+def epoch_update():
+
+    time.sleep(.1)
+    lastval = gettimefromfile()
+    lastval = lastval.split("/")
+    current_epoch = lastval[0]
+    total_epoch = lastval[1]
+
+
+def start_epoch_thread():
+    print("epoch:epoch thread started")
+    epochthread.start()
+
 
 completed =False
 def update_thread():
@@ -51,7 +64,7 @@ def time_thread():                              #thread to keep track of time
 
 def start_time_thread():                                    #starts the time thread
     threading.Thread(target=time_thread,daemon=True).start()
-
+epochthread = threading.Thread(target=epoch_update,daemon=True)
 trainthread = threading.Thread(target=network_thread,daemon=True)
 updatethread = threading.Thread(target=update_thread,daemon=True)
 ###########################################################################################
@@ -59,8 +72,16 @@ updatethread = threading.Thread(target=update_thread,daemon=True)
 
 #utility function definitions
 ###########################################################################################
+def gettimefromfile():
+    while True:
+        with open("datapipe.txt","r") as file:
+            file = file.read()
+            if file == "":
+                file = '__keeplast__'
 
-
+            if time.localtime().tm_sec % 2 == 1:
+                break
+    return(file)
 
 def getTime():                                              #function to get the current time and format it
     return datetime.datetime.now().strftime('%H:%M:%S')
@@ -261,7 +282,7 @@ while True:
         start_train_thread()                                        #start the training thread
         print("Manager:Training thread returned")
         start_update_thread()
-
+        start_epoch_thread()
     if event in (sg.WIN_CLOSED, 'Exit'):
         window.close()
         exit()
