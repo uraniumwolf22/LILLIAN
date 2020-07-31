@@ -4,7 +4,7 @@ import sys
 import PIL
 from PIL import Image
 from getdata import getdata
-from time import sleep
+import time
 import pyautogui as gui
 from datetime import datetime
 import scipy.misc
@@ -23,10 +23,12 @@ def epoch_update():
     while True:
         time.sleep(.1)
         lastval = gettimefromfile()
-        if file != "":
+        if lastval != "":
             lastval = lastval.split("/")
             current_epoch = lastval[0]
             total_epoch = lastval[1]
+            print(lastval)
+        window['status'].Update("epoch:"+str(current_epoch)+"/"+str(total_epoch))
 
 
 def start_epoch_thread():
@@ -184,6 +186,8 @@ def main(_):                                                #main network initia
 
 #UI function
 ###########################################################################################
+current_epoch = 0
+total_epoch = 0
 
 ui_back, ui_mid, ui_front, ui_text = '#373737', '#404040', '#505050', '#A4A4A4'
 sg.theme_background_color(ui_mid)
@@ -198,15 +202,15 @@ sg.theme_element_text_color(ui_text)
 sg.theme_input_text_color(ui_text)
 # sg.theme('SystemDefaultForReal')
 
-keylist = os.listdir('./data')
 
 frame1 = [[sg.Text('Key:          '), sg.Combo(os.listdir('./data'), size=(10,1))],
           [sg.Text('Epochs:     '), sg.Spin([i for i in range(1, 501)], 5, size=(10,1))],
           [sg.Text('Batch Size:'), sg.Spin([i for i in range(1, 65)], 1, size=(10,1))],
           [sg.Radio('CPU', 1), sg.Radio('GPU', 1, True)]]
 
-frame2 = [[sg.ProgressBar(100, size=(52,8), bar_color=(ui_front, ui_back), key='prog')],
-          [sg.Output((80,7))]]
+frame2 = [[sg.ProgressBar(100, size=(52,8), bar_color=(ui_front, ui_back), key='prog')]#,
+          #[sg.Output((80,7))]
+          ]
 
 layout = [[sg.Column([[sg.Frame('Setup', frame1)],
                       [sg.Button('Start', size=(8,1)),
@@ -233,8 +237,7 @@ timeinitialized = False
 while True:
     event, value = window.read()            #initialize the window
 
-    print(keylist)
-    if errorcheck() == ValueError: continue
+
 
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
         window.close()
@@ -304,3 +307,4 @@ while True:
     if event in (sg.WIN_CLOSED, 'Exit'):
         window.close()
         exit()
+    
