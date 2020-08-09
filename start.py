@@ -27,7 +27,6 @@ def epoch_update():
             lastval = lastval.split("/")
             current_epoch = lastval[0]
             total_epoch = lastval[1]
-            print(lastval)
         window['status'].Update("epoch:"+str(current_epoch)+"/"+str(total_epoch))
 
 
@@ -208,8 +207,8 @@ frame1 = [[sg.Text('Key:          '), sg.Combo(os.listdir('./data'), size=(10,1)
           [sg.Text('Batch Size:'), sg.Spin([i for i in range(1, 65)], 1, size=(10,1))],
           [sg.Radio('CPU', 1), sg.Radio('GPU', 1, True)]]
 
-frame2 = [[sg.ProgressBar(100, size=(52,8), bar_color=(ui_front, ui_back), key='prog')]#,
-          #[sg.Output((80,7))]
+frame2 = [[sg.ProgressBar(100, size=(52,8), bar_color=(ui_front, ui_back), key='prog')],
+          [sg.Output((80,7))]
           ]
 
 layout = [[sg.Column([[sg.Frame('Setup', frame1)],
