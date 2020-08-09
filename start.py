@@ -14,6 +14,7 @@ from utils import pp, visualize, to_json, show_all_variables
 import tensorflow as tf
 import threading
 import os
+from time import gmtime, strftime
 sg.theme("Topanga")             #set theme
 
 
@@ -27,7 +28,7 @@ def epoch_update():
             lastval = lastval.split("/")
             current_epoch = lastval[0]
             total_epoch = lastval[1]
-        window['status'].Update("epoch:"+str(current_epoch)+"/"+str(total_epoch))
+        window['status'].Update("Current Time: "+strftime("%Y-%m-%d %H:%M:%S", gmtime())+" epoch: "+str(current_epoch)+"/"+str(total_epoch))
 
 
 def start_epoch_thread():
@@ -72,7 +73,7 @@ updatethread = threading.Thread(target=update_thread,daemon=True)
 ###########################################################################################
 
 
-#utility function definitions
+#utility function definitions(could move to utils but ehh)
 ###########################################################################################
 def gettimefromfile():
     while True:
@@ -232,10 +233,12 @@ def errorcheck():
         return ValueError
 
 timeinitialized = False
-
+epochinit = False
 while True:
     event, value = window.read()            #initialize the window
-
+    if epochinit == False:
+        start_epoch_thread()
+        epochinit = True
 
 
     if event == sg.WIN_CLOSED:              #exit program if the window is closed
@@ -302,7 +305,7 @@ while True:
         start_train_thread()                                        #start the training thread
         print("Manager:Training thread returned")
         start_update_thread()
-        start_epoch_thread()
+        
     if event in (sg.WIN_CLOSED, 'Exit'):
         window.close()
         exit()
