@@ -288,7 +288,7 @@ class DCGAN(object):
 
 
         if time.localtime().tm_sec % 2 == 0:
-            with open("datapipe.txt","w+") as pipefile:
+            with open("status.dat","w+") as pipefile:
                 pipefile.write(str(epoch)+"/"+str(config.epoch))
 
         if np.mod(counter, 100) == 1:

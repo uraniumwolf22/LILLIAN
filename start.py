@@ -77,7 +77,7 @@ updatethread = threading.Thread(target=update_thread,daemon=True)
 ###########################################################################################
 def gettimefromfile():
     while True:
-        with open("datapipe.txt","r") as file:
+        with open("status.dat","r") as file:
             file = file.read()
             if file == "":
                 file = '__keeplast__'
@@ -309,4 +309,3 @@ while True:
     if event in (sg.WIN_CLOSED, 'Exit'):
         window.close()
         exit()
-    
