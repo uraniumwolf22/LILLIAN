@@ -1,20 +1,20 @@
-import PySimpleGUI as sg
-import os
-import sys
-import PIL
-from PIL import Image
-from getdata import getdata
-import time
-import pyautogui as gui
-from datetime import datetime
-import scipy.misc
-import numpy as np
-from model import DCGAN
 from utils import pp, visualize, to_json, show_all_variables
-import tensorflow as tf
-import threading
-import os
 from time import gmtime, strftime
+from datetime import datetime
+from getdata import getdata
+from model import DCGAN
+from PIL import Image
+
+import PySimpleGUI as sg
+import pyautogui as gui
+import tensorflow as tf
+import numpy as np
+import scipy.misc
+import threading
+import time
+import sys
+import os
+
 sg.theme("Topanga")             #set theme
 
 
@@ -305,7 +305,7 @@ while True:
         start_train_thread()                                        #start the training thread
         print("Manager:Training thread returned")
         start_update_thread()
-        
+
     if event in (sg.WIN_CLOSED, 'Exit'):
         window.close()
         exit()
